@@ -28,6 +28,9 @@ interface ResearchResult {
   advantages: string;
   disadvantages: string;
   recommendation: string;
+  use_cases: string;
+  performance: string;
+  best_for: string;
   created_at: string;
 }
 
@@ -41,8 +44,8 @@ interface Research {
 
 type View = "research" | "history" | "detail";
 
-
-const API_URL = "https://ai-tech-scout-backend.vercel.app/api/research";
+const API_URL =
+  "https://ai-tech-scout-backend.vercel.app/api/research";
 
 function App() {
   const [view, setView] = useState<View>("research");
@@ -72,43 +75,6 @@ function App() {
     }, 3000);
   };
 
-  /*
-   * Converts the backend response into the structure
-   * expected by the React UI.
-   *
-   * Backend currently returns:
-   *
-   * {
-   *   success: true,
-   *   research: {
-   *     id,
-   *     topic,
-   *     status,
-   *     created_at,
-   *     result_id,
-   *     summary,
-   *     comparison,
-   *     advantages,
-   *     disadvantages,
-   *     recommendation
-   *   }
-   * }
-   *
-   * The frontend expects:
-   *
-   * {
-   *   id,
-   *   topic,
-   *   status,
-   *   created_at,
-   *   result: {
-   *     summary,
-   *     comparison,
-   *     ...
-   *   }
-   * }
-   */
-
   const mapResearchResponse = (data: any): Research => {
     const source = data.research ?? data;
 
@@ -127,6 +93,9 @@ function App() {
             advantages: source.advantages ?? "",
             disadvantages: source.disadvantages ?? "",
             recommendation: source.recommendation ?? "",
+            use_cases: source.use_cases ?? "",
+            performance: source.performance ?? "",
+            best_for: source.best_for ?? "",
             created_at: source.created_at ?? "",
           }
         : undefined);
@@ -151,9 +120,11 @@ function App() {
         throw new Error(data.message || "Unable to load history");
       }
 
-      const items = Array.isArray(data)
+      const rawItems = Array.isArray(data)
         ? data
         : data.research || data.sessions || [];
+
+      const items = rawItems.map(mapResearchResponse);
 
       setHistory(items);
     } catch (err) {
@@ -202,11 +173,6 @@ function App() {
         throw new Error(data.message || "Failed to create research");
       }
 
-      /*
-       * FIX:
-       * Backend returns the result fields inside data.research,
-       * not as data.result.
-       */
       const completedResearch = mapResearchResponse(data);
 
       setResearch(completedResearch);
@@ -240,11 +206,6 @@ function App() {
         throw new Error(data.message || "Unable to load research");
       }
 
-      /*
-       * FIX:
-       * Convert the backend response into the frontend
-       * Research + ResearchResult structure.
-       */
       const item = mapResearchResponse(data);
 
       setSelectedResearch(item);
@@ -277,7 +238,9 @@ function App() {
         throw new Error(data.message || "Failed to delete research");
       }
 
-      setHistory((current) => current.filter((item) => item.id !== id));
+      setHistory((current) =>
+        current.filter((item) => item.id !== id)
+      );
 
       if (research?.id === id) {
         setResearch(null);
@@ -345,7 +308,11 @@ function App() {
             </span>
           </button>
 
-          <div className={`nav-links ${mobileMenu ? "mobile-open" : ""}`}>
+          <div
+            className={`nav-links ${
+              mobileMenu ? "mobile-open" : ""
+            }`}
+          >
             <button
               className={view === "research" ? "active" : ""}
               onClick={goResearch}
@@ -356,7 +323,9 @@ function App() {
 
             <button
               className={
-                view === "history" || view === "detail" ? "active" : ""
+                view === "history" || view === "detail"
+                  ? "active"
+                  : ""
               }
               onClick={openHistory}
             >
@@ -376,7 +345,11 @@ function App() {
               onClick={() => setMobileMenu(!mobileMenu)}
               aria-label="Toggle navigation menu"
             >
-              {mobileMenu ? <X size={21} /> : <Menu size={21} />}
+              {mobileMenu ? (
+                <X size={21} />
+              ) : (
+                <Menu size={21} />
+              )}
             </button>
           </div>
         </div>
@@ -430,11 +403,16 @@ function App() {
           </h1>
 
           <p className="hero-subtitle">
-            Scout emerging technologies, compare engineering choices and turn
-            complex decisions into actionable intelligence.
+            Scout emerging technologies, compare engineering
+            choices and turn complex decisions into actionable
+            intelligence.
           </p>
 
-          <div className={`research-input ${loading ? "is-loading" : ""}`}>
+          <div
+            className={`research-input ${
+              loading ? "is-loading" : ""
+            }`}
+          >
             <div className="input-icon">
               <Search size={20} />
             </div>
@@ -453,7 +431,10 @@ function App() {
               }}
             />
 
-            <button onClick={startResearch} disabled={loading}>
+            <button
+              onClick={startResearch}
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <Loader2 size={17} className="spin" />
@@ -471,17 +452,27 @@ function App() {
           <div className="quick-topics">
             <span>EXPLORE</span>
 
-            <button onClick={() => useExample("Zustand vs Redux Toolkit")}>
+            <button
+              onClick={() =>
+                useExample("Zustand vs Redux Toolkit")
+              }
+            >
               Zustand vs Redux
             </button>
 
-            <button onClick={() => useExample("Spring Boot vs Node.js")}>
+            <button
+              onClick={() =>
+                useExample("Spring Boot vs Node.js")
+              }
+            >
               Spring Boot vs Node.js
             </button>
 
             <button
               onClick={() =>
-                useExample("React Server Components vs traditional React")
+                useExample(
+                  "React Server Components vs traditional React"
+                )
               }
             >
               React Server Components
@@ -502,7 +493,8 @@ function App() {
                 </div>
 
                 <span>
-                  Mapping technologies, trade-offs and engineering signals...
+                  Mapping technologies, trade-offs and
+                  engineering signals...
                 </span>
               </div>
 
@@ -584,12 +576,15 @@ function App() {
               </h1>
 
               <p>
-                Every investigation you've run, preserved as an evolving
-                intelligence timeline.
+                Every investigation you've run, preserved as
+                an evolving intelligence timeline.
               </p>
             </div>
 
-            <button className="new-research" onClick={goResearch}>
+            <button
+              className="new-research"
+              onClick={goResearch}
+            >
               <Sparkles size={16} />
               New Investigation
             </button>
@@ -623,7 +618,9 @@ function App() {
                 id="history-search"
                 name="history-search"
                 value={historySearch}
-                onChange={(e) => setHistorySearch(e.target.value)}
+                onChange={(e) =>
+                  setHistorySearch(e.target.value)
+                }
                 placeholder="Search intelligence..."
               />
 
@@ -651,9 +648,13 @@ function App() {
                 <Database size={22} />
               </div>
 
-              <strong>Synchronizing intelligence...</strong>
+              <strong>
+                Synchronizing intelligence...
+              </strong>
 
-              <span>Retrieving your research archive</span>
+              <span>
+                Retrieving your research archive
+              </span>
             </div>
           ) : filteredHistory.length === 0 ? (
             <div className="empty-state">
@@ -661,7 +662,9 @@ function App() {
                 <Search size={25} />
               </div>
 
-              <div className="empty-eyebrow">NO SIGNALS FOUND</div>
+              <div className="empty-eyebrow">
+                NO SIGNALS FOUND
+              </div>
 
               <strong>
                 {history.length === 0
@@ -690,7 +693,9 @@ function App() {
                 <div
                   className="timeline-entry"
                   key={item.id}
-                  style={{ animationDelay: `${index * 90}ms` }}
+                  style={{
+                    animationDelay: `${index * 90}ms`,
+                  }}
                 >
                   <div className="timeline-node">
                     <span />
@@ -699,11 +704,17 @@ function App() {
                   <article className="history-card">
                     <button
                       className="history-open"
-                      onClick={() => openResearch(item.id)}
+                      onClick={() =>
+                        openResearch(item.id)
+                      }
                     >
                       <div className="history-card-top">
                         <span className="session-label">
-                          SESSION {String(index + 1).padStart(2, "0")}
+                          SESSION{" "}
+                          {String(index + 1).padStart(
+                            2,
+                            "0"
+                          )}
                         </span>
 
                         <span className="history-status">
@@ -715,14 +726,17 @@ function App() {
                       <h2>{item.topic}</h2>
 
                       <p>
-                        Technology intelligence investigation · Research
-                        session #{item.id}
+                        Technology intelligence
+                        investigation · Research session #
+                        {item.id}
                       </p>
 
                       <div className="history-card-bottom">
                         <span>
                           <Clock3 size={13} />
-                          {formatDate(item.created_at)}
+                          {formatDate(
+                            item.created_at
+                          )}
                         </span>
 
                         <span className="open-label">
@@ -753,7 +767,10 @@ function App() {
 
       {view === "detail" && (
         <section className="detail-page">
-          <button className="back-button" onClick={openHistory}>
+          <button
+            className="back-button"
+            onClick={openHistory}
+          >
             <ArrowLeft size={17} />
             Back to intelligence
           </button>
@@ -764,8 +781,13 @@ function App() {
                 <Brain size={28} />
               </div>
 
-              <strong>Decrypting research session...</strong>
-              <span>Retrieving saved intelligence.</span>
+              <strong>
+                Decrypting research session...
+              </strong>
+
+              <span>
+                Retrieving saved intelligence.
+              </span>
             </div>
           ) : selectedResearch?.result ? (
             <ResearchResultView
@@ -782,8 +804,8 @@ function App() {
               <strong>Research unavailable</strong>
 
               <span>
-                This research session may have been deleted or no longer
-                exists.
+                This research session may have been
+                deleted or no longer exists.
               </span>
 
               <button onClick={openHistory}>
@@ -804,9 +826,14 @@ function App() {
           AI Tech Scout
         </div>
 
-        <span>Technology intelligence for the builders of tomorrow.</span>
+        <span>
+          Technology intelligence for the builders of
+          tomorrow.
+        </span>
 
-        <span>REACT · NODE · POSTGRESQL · AI</span>
+        <span>
+          REACT · NODE · POSTGRESQL · AI
+        </span>
       </footer>
 
       {deleteTarget && (
@@ -820,19 +847,26 @@ function App() {
         >
           <div
             className="delete-modal"
-            onClick={(event) => event.stopPropagation()}
+            onClick={(event) =>
+              event.stopPropagation()
+            }
           >
             <div className="delete-modal-icon">
               <Trash2 size={22} />
             </div>
 
-            <div className="modal-eyebrow">REMOVE INTELLIGENCE</div>
+            <div className="modal-eyebrow">
+              REMOVE INTELLIGENCE
+            </div>
 
             <h2>Delete this investigation?</h2>
 
             <p>
               This will permanently remove
-              <strong> "{deleteTarget.topic}" </strong>
+              <strong>
+                {" "}
+                "{deleteTarget.topic}"{" "}
+              </strong>
               from your research archive.
             </p>
 
@@ -840,7 +874,9 @@ function App() {
               <button
                 className="cancel-delete"
                 disabled={!!deletingId}
-                onClick={() => setDeleteTarget(null)}
+                onClick={() =>
+                  setDeleteTarget(null)
+                }
               >
                 Keep it
               </button>
@@ -852,7 +888,10 @@ function App() {
               >
                 {deletingId ? (
                   <>
-                    <Loader2 size={16} className="spin" />
+                    <Loader2
+                      size={16}
+                      className="spin"
+                    />
                     Removing...
                   </>
                 ) : (
@@ -883,7 +922,9 @@ function Feature({
 }) {
   return (
     <div className="feature">
-      <div className={`feature-icon ${type}`}>{icon}</div>
+      <div className={`feature-icon ${type}`}>
+        {icon}
+      </div>
 
       <div>
         <strong>{title}</strong>
@@ -907,7 +948,11 @@ function ResearchResultView({
   if (!research.result) return null;
 
   return (
-    <div className={`result-view ${detail ? "detail-result" : ""}`}>
+    <div
+      className={`result-view ${
+        detail ? "detail-result" : ""
+      }`}
+    >
       <div className="result-header">
         <div>
           <div className="eyebrow">
@@ -920,7 +965,9 @@ function ResearchResultView({
           <div className="result-info">
             <span>SESSION #{research.id}</span>
             <span>•</span>
-            <span>{formatDate(research.created_at)}</span>
+            <span>
+              {formatDate(research.created_at)}
+            </span>
           </div>
         </div>
 
@@ -938,7 +985,9 @@ function ResearchResultView({
         </div>
 
         <div>
-          <span className="panel-label">EXECUTIVE INTELLIGENCE</span>
+          <span className="panel-label">
+            EXECUTIVE INTELLIGENCE
+          </span>
 
           <p>{research.result.summary}</p>
         </div>
@@ -967,6 +1016,27 @@ function ResearchResultView({
         />
 
         <ResultCard
+          icon={<Database />}
+          type="blue"
+          title="Use Cases"
+          text={research.result.use_cases}
+        />
+
+        <ResultCard
+          icon={<Zap />}
+          type="green"
+          title="Performance"
+          text={research.result.performance}
+        />
+
+        <ResultCard
+          icon={<Brain />}
+          type="purple"
+          title="Best For"
+          text={research.result.best_for}
+        />
+
+        <ResultCard
           icon={<Lightbulb />}
           type="yellow"
           title="Recommendation"
@@ -976,7 +1046,10 @@ function ResearchResultView({
       </div>
 
       {!detail && onHistory && (
-        <button className="view-archive" onClick={onHistory}>
+        <button
+          className="view-archive"
+          onClick={onHistory}
+        >
           Open intelligence archive
           <ArrowRight size={16} />
         </button>
@@ -999,9 +1072,15 @@ function ResultCard({
   featured?: boolean;
 }) {
   return (
-    <article className={`result-panel ${featured ? "featured" : ""}`}>
+    <article
+      className={`result-panel ${
+        featured ? "featured" : ""
+      }`}
+    >
       <div className="panel-heading">
-        <div className={`result-icon ${type}`}>{icon}</div>
+        <div className={`result-icon ${type}`}>
+          {icon}
+        </div>
 
         <span>{title}</span>
       </div>

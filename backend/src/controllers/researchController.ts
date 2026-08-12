@@ -43,22 +43,28 @@ export const createResearch = async (
           comparison,
           advantages,
           disadvantages,
-          recommendation
+          recommendation,
+          use_cases,
+          performance,
+          best_for
         )
-        VALUES ($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
         `,
         [
           research.id,
-          result.summary,
-          result.comparison,
-          result.advantages,
-          result.disadvantages,
-          result.recommendation,
+          result.summary ?? "",
+          result.comparison ?? "",
+          result.advantages ?? "",
+          result.disadvantages ?? "",
+          result.recommendation ?? "",
+          result.use_cases ?? "",
+          result.performance ?? "",
+          result.best_for ?? "",
         ]
       );
 
-      // Mark session completed
+      // Mark research as completed
       const updatedSession = await pool.query(
         `
         UPDATE research_sessions
@@ -76,7 +82,7 @@ export const createResearch = async (
         result: resultQuery.rows[0],
       });
     } catch (aiError) {
-      console.error("Create research error:", aiError);
+      console.error("AI research error:", aiError);
 
       // Mark research as failed
       await pool.query(
@@ -103,7 +109,6 @@ export const createResearch = async (
   }
 };
 
-
 // GET ALL RESEARCH
 export const getAllResearch = async (
   req: Request,
@@ -119,7 +124,10 @@ export const getAllResearch = async (
         rr.comparison,
         rr.advantages,
         rr.disadvantages,
-        rr.recommendation
+        rr.recommendation,
+        rr.use_cases,
+        rr.performance,
+        rr.best_for
       FROM research_sessions rs
       LEFT JOIN research_results rr
         ON rs.id = rr.research_session_id
@@ -141,7 +149,6 @@ export const getAllResearch = async (
   }
 };
 
-
 // GET RESEARCH BY ID
 export const getResearchById = async (
   req: Request,
@@ -159,7 +166,10 @@ export const getResearchById = async (
         rr.comparison,
         rr.advantages,
         rr.disadvantages,
-        rr.recommendation
+        rr.recommendation,
+        rr.use_cases,
+        rr.performance,
+        rr.best_for
       FROM research_sessions rs
       LEFT JOIN research_results rr
         ON rs.id = rr.research_session_id
@@ -188,7 +198,6 @@ export const getResearchById = async (
     });
   }
 };
-
 
 // DELETE RESEARCH
 export const deleteResearch = async (

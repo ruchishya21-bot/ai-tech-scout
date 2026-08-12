@@ -8,24 +8,31 @@ export const researchTechnology = async (topic: string) => {
   const prompt = `
 You are an expert technology research assistant.
 
-Research this topic:
+Research this technology topic:
 
 "${topic}"
 
-Provide a clear and useful analysis.
+Provide practical, accurate and useful engineering intelligence.
 
-Return ONLY valid JSON in this exact format:
+Return ONLY valid JSON in exactly this format:
 
 {
-  "summary": "Short summary",
-  "comparison": "Detailed comparison",
+  "summary": "Short executive summary",
+  "comparison": "Detailed technical comparison and important trade-offs",
   "advantages": "Main advantages",
   "disadvantages": "Main disadvantages",
-  "recommendation": "Final recommendation"
+  "recommendation": "Final recommendation explaining when and why to choose it",
+  "use_cases": "Important real-world use cases",
+  "performance": "Performance, scalability and efficiency considerations",
+  "best_for": "Who or what type of project this technology is best suited for"
 }
 
-Do not use markdown.
-Do not wrap the JSON in code fences.
+Rules:
+- Return ONLY JSON.
+- Do not use Markdown.
+- Do not use code fences.
+- Do not add text before or after the JSON.
+- Keep every field as a useful string.
 `;
 
   const response = await ai.models.generateContent({
