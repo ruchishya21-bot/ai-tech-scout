@@ -8,35 +8,16 @@ dotenv.config();
 
 const app = express();
 
-const PORT = Number(process.env.PORT || 5000);
-
-const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(",")
-      .map((origin) => origin.trim())
-      .filter(Boolean)
-  : ["http://localhost:5173"];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
-
+app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "AI Tech Scout API is running 🚀",
-  });
-});
+app.use("/api/research", researchRoutes);
 
 app.get("/api/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
 
-    res.status(200).json({
+    res.json({
       success: true,
       status: "healthy",
       database: "connected",
@@ -44,9 +25,9 @@ app.get("/api/health", async (req, res) => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Health check database error:", error);
+    console.error("Health check error:", error);
 
-    res.status(503).json({
+    res.status(500).json({
       success: false,
       status: "unhealthy",
       database: "disconnected",
@@ -62,7 +43,7 @@ app.get("/api/db-test", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Database connected 🚀",
+      message: "Database connected",
       time: result.rows[0].now,
     });
   } catch (error) {
@@ -75,55 +56,12 @@ app.get("/api/db-test", async (req, res) => {
   }
 });
 
-app.use("/api/research", researchRoutes);
+export default app;
 
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route not found",
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
   });
-});
-
-app.use(
-  (
-    error: Error,
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
-    console.error("Unhandled server error:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-);
-
-const server = app.listen(PORT, () => {
-  console.log("======================================");
-  console.log("       AI TECH SCOUT API");
-  console.log("======================================");
-  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`Port: ${PORT}`);
-  console.log(`Health: http://localhost:${PORT}/api/health`);
-  console.log("======================================");
-});
-
-const shutdown = async (signal: string) => {
-  console.log(`${signal} received. Shutting down gracefully...`);
-
-  server.close(async () => {
-    try {
-      await pool.end();
-      console.log("Database connection closed.");
-      process.exit(0);
-    } catch (error) {
-      console.error("Error during shutdown:", error);
-      process.exit(1);
-    }
-  });
-};
-
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-process.on("SIGINT", () => shutdown("SIGINT"));
+}
