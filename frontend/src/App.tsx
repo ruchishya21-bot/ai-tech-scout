@@ -41,7 +41,8 @@ interface Research {
 
 type View = "research" | "history" | "detail";
 
-const API_URL = "http://localhost:5000/api/research";
+
+const API_URL = "https://ai-tech-scout-backend.vercel.app/api/research";
 
 function App() {
   const [view, setView] = useState<View>("research");
