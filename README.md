@@ -18,6 +18,28 @@ https://github.com/ruchishya21-bot/ai-tech-scout
 
 ---
 
+## 📸 Screenshots
+
+### Research Dashboard
+
+![AI Tech Scout Dashboard](screenshots/dashboard.png)
+
+### AI Research Results — Top
+
+![AI Research Results](screenshots/research-result-top.png)
+
+### AI Research Results — Bottom
+
+![AI Research Intelligence](screenshots/research-result-bottom.png)
+
+### Research Archive
+
+![Research Archive](screenshots/archive.png)
+
+### Detailed Research View
+
+![Detailed Research View](screenshots/detail.png)
+
 ## ✨ Features
 
 ### 🔎 AI-Powered Research
