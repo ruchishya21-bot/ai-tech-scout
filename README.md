@@ -6,9 +6,15 @@
 
 ## 🚀 Live Demo
 
-**Live Application:** https://ai-tech-scout.vercel.app/
+**Frontend:**  
+https://ai-tech-scout.vercel.app/
 
-**GitHub:** github.com/ruchishya21-bot/ai-tech-scout
+**Backend API:**  
+https://ai-tech-scout-backend.vercel.app/
+
+**GitHub:**  
+https://github.com/ruchishya21-bot/ai-tech-scout
+
 
 ---
 
