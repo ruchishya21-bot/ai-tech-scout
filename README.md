@@ -6,7 +6,7 @@
 
 ## 🚀 Live Demo
 
-**Live Application:** ai-tech-scout.vercel.app
+**Live Application:** https://ai-tech-scout.vercel.app/
 
 **GitHub:** github.com/ruchishya21-bot/ai-tech-scout
 
