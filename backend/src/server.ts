@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -11,8 +12,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Root API status
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    service: "AI Tech Scout API",
+    status: "operational",
+    version: "1.0.0",
+    message: "AI Tech Scout backend is running successfully.",
+  });
+});
+
+// Research API
 app.use("/api/research", researchRoutes);
 
+// Health check
 app.get("/api/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
@@ -37,6 +51,7 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
+// Database test
 app.get("/api/db-test", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
@@ -65,3 +80,4 @@ if (process.env.NODE_ENV !== "production") {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
+
