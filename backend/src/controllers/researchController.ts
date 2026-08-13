@@ -53,18 +53,18 @@ export const createResearch = async (
         `,
         [
           research.id,
-          result.summary ?? "",
-          result.comparison ?? "",
-          result.advantages ?? "",
-          result.disadvantages ?? "",
-          result.recommendation ?? "",
-          result.use_cases ?? "",
-          result.performance ?? "",
-          result.best_for ?? "",
+          result.summary,
+          result.comparison,
+          result.advantages,
+          result.disadvantages,
+          result.recommendation,
+          result.use_cases,
+          result.performance,
+          result.best_for,
         ]
       );
 
-      // Mark research as completed
+      // Mark session completed
       const updatedSession = await pool.query(
         `
         UPDATE research_sessions
@@ -82,7 +82,7 @@ export const createResearch = async (
         result: resultQuery.rows[0],
       });
     } catch (aiError) {
-      console.error("AI research error:", aiError);
+      console.error("Create research error:", aiError);
 
       // Mark research as failed
       await pool.query(
